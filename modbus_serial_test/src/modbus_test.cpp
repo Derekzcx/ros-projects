@@ -1,5 +1,6 @@
 /*
 本程序用于实现基于modbus协议的串口通讯节点设计,并订阅上位机的指令信息
+ 本程序针对的电机驱动为 雷赛的数字步进电机驱动 DM2C-RS556,采用的通讯方式位RS485,modbus协议
 */
 #include <ros/ros.h>
 #include <std_msgs/String.h>
