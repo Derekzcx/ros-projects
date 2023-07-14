@@ -1,0 +1,11 @@
+<launch>
+    <node pkg="modbus_serial_test" name="modbus_test" type="modbus_test" output="screen">
+        <!--sub /ui_command - data:'x:x' pub /motor_states-->
+        <!--sub 如: 0:-1 | 1:-1 | 2:1000 | 3:1,1000,30 | 4:-1 | 5:-1 -->
+        <param name="port"     value="/dev/ttyS0"/> <!-- 串口 -->
+        <param name="baud"     value="38400" />       <!-- 波特率 -->
+        <param name="data_bit" value="8" />      <!-- 数据位 -->
+        <param name="stop_bit" value="1" />      <!-- 停止位 -->
+        <param name="parity"   value="N" />        <!-- 奇偶校验 N无, E偶, O奇-->
+    </node>
+</launch>
