@@ -1,0 +1,12 @@
+<launch>
+    <!-- the path of HK camera sdk lib -->
+    <!--<param name="hklib_path" value="/home/king/HKCamera/CH-HCNetSDKV6.1.9.4_build20220413_linux64/lib" />-->
+    <param name="hklib_path" value="/home/xtark/ros_ws/src/hkcamera_driver/lib" />
+    <!-- the camera count -->
+    <param name="camera_count" type="int" value="1" />
+    <!-- camera info list, if you want to init cameras more than one, add cameara info in this, and name the camera of camera0, camera1... -->
+    <param name="camera0_ip" value="10.90.123.159" />
+    <param name="camera0_user" value="admin" />
+    <param name="camera0_passwd" value="cqupt311" />
+    <node pkg="hkcamera_driver" type="hkcamera_driver_node" name="hkcamera_driver_node" output="screen" />
+</launch>

@@ -1,0 +1,6 @@
+int64 mode
+int64 index
+---
+int64 width
+int64 height
+uint8[] frameData

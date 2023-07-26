@@ -1,0 +1,38 @@
+[2022-08-26 09:40:34.793][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2022-08-26 09:40:34.793][INF] The COM:Core ver is 6.1.9.4, 2022_04_12. Async:1.
+[2022-08-26 09:40:34.793][INF] This HCNetSDK ver is 6.1.9.4 Ver 2022_04_12.
+[2022-08-26 09:40:34.854][INF] Login dev 10.90.123.159:8000.
+[2022-08-26 09:40:34.854][INF] dwTotalNum[2048]
+[2022-08-26 09:40:34.858][INF] Private connect 10.90.123.159:8000 sock=138 this=0x1467cd4 cmd=0x10000 port=48508
+[2022-08-26 09:40:34.858][INF] LogonDev1 in[10.90.123.159:8000]
+[2022-08-26 09:40:34.865][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[/home/king/HKCamera/CH-HCNetSDKV6.1.9.4_build20220413_linux64/lib//libcrypto.so.1.1], hHandleRet[21437280]
+[2022-08-26 09:40:34.868][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[/home/king/HKCamera/CH-HCNetSDKV6.1.9.4_build20220413_linux64/lib//libssl.so.1.1], hHandleRet[21439200]
+[2022-08-26 09:40:34.869][INF] SSLTRANSAPI::LoadAPI, libeay, Load Real Path[/home/king/HKCamera/CH-HCNetSDKV6.1.9.4_build20220413_linux64/lib//libcrypto.so.1.1]
+[2022-08-26 09:40:34.869][INF] SSLTRANSAPI::IsAllAPILoaded, SSL_library_init Unload
+[2022-08-26 09:40:34.869][INF] OpenSSL, Not All Function Loaded!
+[2022-08-26 09:40:34.869][INF] SSLTRANSAPI::PrintVersion, OpenSSL version info [OpenSSL 1.1.1l  24 Aug 2021]
+[2022-08-26 09:40:34.869][INF] CSSLTrans::SSLCtxInit, dwSSLVersion[6], m_fnTLSServerMethod
+[2022-08-26 09:40:35.253][DBG] CComBase::Load, Load szDllPath[/home/king/catkin_ws/src/hkcamera_driver/lib/HCNetSDKCom/libHCPreview.so] SUCC
+[2022-08-26 09:40:35.254][INF] AbilityAnalyze---Init-- start
+[2022-08-26 09:40:35.255][DBG] AbilityAnalyze---Init-- over, DeviceList path [/home/king/catkin_ws/src/hkcamera_driver/lib/HCNetSDKCom/LocalXml/DeviceList.xml], load result[0]
+[2022-08-26 09:40:35.256][INF] The COM:Preview ver is 6.1.9.4, 2022_04_12.
+[2022-08-26 09:40:35.257][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48600
+[2022-08-26 09:40:35.559][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48602
+[2022-08-26 09:40:35.900][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48604
+[2022-08-26 09:40:36.174][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48606
+[2022-08-26 09:40:36.474][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48608
+[2022-08-26 09:40:36.819][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48610
+[2022-08-26 09:40:37.114][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48612
+[2022-08-26 09:40:37.462][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48614
+[2022-08-26 09:40:37.757][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48616
+[2022-08-26 09:40:38.100][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48618
+[2022-08-26 09:40:38.394][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48620
+[2022-08-26 09:40:38.719][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48622
+[2022-08-26 09:40:39.060][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48624
+[2022-08-26 09:40:39.326][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48626
+[2022-08-26 09:40:39.595][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48628
+[2022-08-26 09:40:39.915][INF] Private connect 10.90.123.159:8000 sock=137 this=0x1467cd4 cmd=0x30009 port=48630
+[2022-08-26 09:40:40.256][INF] COM_Logout[0][1]
+[2022-08-26 09:40:40.264][DBG] CUserMgr::UnRegisterHeartProxy[0]
+[2022-08-26 09:40:40.266][INF] Private connect 10.90.123.159:8000 sock=6 this=0x1467cd4 cmd=0x10100 port=48666
+[2022-08-26 09:40:40.270][INF] CTransUnitMgr::UnloadTransUnitLib
