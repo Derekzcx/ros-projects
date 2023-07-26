@@ -10,6 +10,7 @@
 (1) 下载安装 仓库中的 libmodbus-3.1.6 
 安装过程如下:
 
+``` bash
 //1.解压
 tar -zxvf libmodbus-3.0.6.tar.gz
     
@@ -21,7 +22,7 @@ make
     
 //4.安装
 make install
-...
+```
 
 * 注意安装后的动态库和头文件的路径,适时修改CMakeLists.txt的配置
 
