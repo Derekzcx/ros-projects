@@ -1,6 +1,5 @@
 /*
 本程序用于实现基于modbus协议的串口通讯节点设计,并订阅上位机的指令信息
- 本程序针对的电机驱动为 雷赛的数字步进电机驱动 DM2C-RS556,采用的通讯方式位RS485,modbus协议
 */
 #include <ros/ros.h>
 #include <std_msgs/String.h>
@@ -10,35 +9,35 @@
 #include <sstream> // stringstream的头文件
 #include <vector>
 
-const int Slave_Adress = 0x01;
+const u_char Slave_Adress = 0x01;
 
-const int Pulses_Per_Revolut_Register = 0x0001;    // 脉冲数/转,默认10000,范围200-51200,单位P/R
-const int Dir_Register =                0x0007;    // 电机运转方向,0为正,1位负,,默认为 0
+const ushort Pulses_Per_Revolut_Register = 0x0001;    // 脉冲数/转,默认10000,范围200-51200,单位P/R
+const ushort Dir_Register =                0x0007;    // 电机运转方向,0为正,1位负,,默认为 0
 
-const int DI2_Mode_Register =           0x0147;    //DI2输入口的寄存器地址
-const int DI_In_Enable =                0x0080;    //使能输入，配置成常闭就是使能
-const int DI_In_Disable =               0x0000;    //无效输入
-const int DI_In_Emergency_Stop =        0x0022;    //强制急停
+const ushort DI2_Mode_Register =           0x0147;    //DI2输入口的寄存器地址
+const ushort DI_In_Enable =                0x0080;    //使能输入，配置成常闭就是使能
+const ushort DI_In_Disable =               0x0000;    //无效输入
+const ushort DI_In_Emergency_Stop =        0x0022;    //强制急停
 
-const int DI_State_Register =           0x0179;    //DI1模式配置
-const int Motor_Current_Register =      0x0191;    //电机峰值电流
+const ushort DI_State_Register =           0x0179;    //DI1模式配置
+const ushort Motor_Current_Register =      0x0191;    //电机峰值电流
                                                                 
-const int Trigger_Register =            0x6002;    //触发寄存器  //触发方式,0x01P(p=0-15),p端定位
+const ushort Trigger_Register =            0x6002;    //触发寄存器  //触发方式,0x01P(p=0-15),p端定位
                                                                 // 0x020,回零 ; 0x040,急停; 0x021 当前位置手动设零
-const int Start_P0 =                    0x0010;    //路径0触发运行  
-const int Set_Position_0 =              0x0021;    //回零触发,设定当前位置为0 
-const int Back_0 =                      0x0020;    //回0
-const int Stop_Now =                    0x0040;    //急停
+const ushort Start_P0 =                    0x0010;    //路径0触发运行  
+const ushort Set_Position_0 =              0x0021;    //回零触发,设定当前位置为0 
+const ushort Back_0 =                      0x0020;    //回0
+const ushort Stop_Now =                    0x0040;    //急停
 
-const int Move_Mode_Path_0_Register =   0x6200;    //运动路径0寄存器 
-const int Position_Mode =               0x0001;    //位置模式, y用于路径0寄存器的0-3bit位的设置,0,1(位置定位),2(速度定位),3
-const int Speed_Mode =                  0x0002;    //速度模式
+const ushort Move_Mode_Path_0_Register =   0x6200;    //运动路径0寄存器 
+const ushort Position_Mode =               0x0001;    //位置模式, y用于路径0寄存器的0-3bit位的设置,0,1(位置定位),2(速度定位),3
+const ushort Speed_Mode =                  0x0002;    //速度模式
 
-const int Position_H =                   0x6201;    //位置H寄存器
-const int Position_L =                   0x6202;    //位置L寄存器
-const int Speed_Register =               0x6203;    //速度寄存器,用于设置速度  //单位 rpm
-const int Acceleration_Register =        0x6204;    //加速度寄存器,  //单位 ms/1000rpm
-const int Deceleration_Register =        0x6205;    //减速度寄存器,  //单位ms/1000rpm
+const ushort Position_H =                   0x6201;    //位置H寄存器
+const ushort Position_L =                   0x6202;    //位置L寄存器
+const ushort Speed_Register =               0x6203;    //速度寄存器,用于设置速度  //单位 rpm
+const ushort Acceleration_Register =        0x6204;    //加速度寄存器,  //单位 ms/1000rpm
+const ushort Deceleration_Register =        0x6205;    //减速度寄存器,  //单位ms/1000rpm
 
 typedef struct st_port_info{
     char m_port[21];    // 保存串口驱动端口, 若 "/dev/ttyUSB0"
@@ -81,9 +80,15 @@ public:
             modbus_free(m_mb);
             return false;
         }
-        modbus_set_slave(m_mb,m_slave_adress);
+        if(modbus_set_slave(m_mb,m_slave_adress) == -1) {printf("set_slave failed\n");return false;}
+        modbus_set_debug(m_mb, 1);
+        struct timeval response_timeout;
+        response_timeout.tv_sec = 1;
+        response_timeout.tv_usec = 0;
+        modbus_set_response_timeout(m_mb, response_timeout.tv_sec, response_timeout.tv_usec);
+        modbus_set_byte_timeout(m_mb, 1, 0);
         modbus_rtu_set_serial_mode(m_mb, MODBUS_RTU_RS485);
-        modbus_rtu_set_rts(m_mb, MODBUS_RTU_RTS_UP);// 设置rts位up
+        //modbus_rtu_set_rts(m_mb, MODBUS_RTU_RTS_UP);// 设置rts位up
         return true;
     }
     // 发起连接
@@ -99,9 +104,13 @@ public:
     // 初始化电机
     bool init_motor(){
         int ret1 = modbus_write_register(m_mb, Pulses_Per_Revolut_Register, 1000);
+        if(ret1== -1) {printf("ret1 failed\n");}
         int ret2 = modbus_write_register(m_mb, Motor_Current_Register, 50);
-        int ret3 = modbus_write_register(m_mb, Dir_Register, m_dirction_flag);//设置电机方向
+        if(ret2== -1) {printf("ret2 failed\n");}
+        int ret3 = modbus_write_register(m_mb, Dir_Register, (uint16_t)m_dirction_flag);//设置电机方向
+        if(ret3== -1) {printf("ret3 failed\n");}
         int ret4 = modbus_write_register(m_mb, DI2_Mode_Register, DI_In_Enable|DI_In_Emergency_Stop);//DI2输入有效信号后即停
+        if(ret4== -1) {printf("ret4 failed\n");}
         if(ret1 == -1 || ret2 == -1 || ret3 == -1 || ret4 == -1) return false;
         return true;
     }
@@ -120,24 +129,25 @@ public:
         memset(m_state_registers, 0, sizeof(m_state_registers));
         int ret = modbus_read_registers(m_mb, DI_State_Register, 1, m_state_registers);
         if(ret == -1) return false;
-        // printf("m_state_registers[0] = %x\n", m_state_registers[0]);
-        // printf("m_state_registers[0] & 0x02 = %x\n", m_state_registers[0] & 0x02);
-        // printf("DI_In_Disable | DI_In_Emergency_Stop = %x\n", DI_In_Disable | DI_In_Emergency_Stop);
-        // printf("DI_In_Enable | DI_In_Emergency_Stop = %x\n", DI_In_Enable | DI_In_Emergency_Stop);
+        printf("m_state_registers : 0x%x \n", m_state_registers[0]);
         if(bool(m_state_registers[0] & 0x02) && !m_dirction_flag){ // //如果当前在最低点，那么当前的急停已经使能要先设置成失能
+            /// 变为低电平有效
             if(modbus_write_register(m_mb, DI2_Mode_Register, DI_In_Disable | DI_In_Emergency_Stop)==-1) return false;
             //启动
             if(modbus_write_register(m_mb, Move_Mode_Path_0_Register, Speed_Mode) == -1) return false;
             if(modbus_write_register(m_mb, Speed_Register, speed) == -1) return false;
-            if(modbus_write_register(m_mb, Trigger_Register, Start_P0)) return false; 
+            if(modbus_write_register(m_mb, Trigger_Register, Start_P0) == -1) return false; 
+            sleep(4);
             //等待低电平到
             memset(m_state_registers, 0, sizeof(m_state_registers));
             modbus_read_registers(m_mb, DI_State_Register, 1, m_state_registers);
 
-            while (!(m_state_registers[0] & 0x02)){
-                memset(m_state_registers, 0, sizeof(m_state_registers));
+            if(!bool(m_state_registers[0] & 0x02)){
+                //memset(m_state_registers, 0, sizeof(m_state_registers));
                 modbus_read_registers(m_mb, DI_State_Register, 1, m_state_registers);
+               
             }
+            printf("m_state_registers : 0x%x \n", m_state_registers[0]);
             // 启动高点平急停
             if(modbus_write_register(m_mb, DI2_Mode_Register, DI_In_Enable | DI_In_Emergency_Stop)==-1) return false;
         }
@@ -161,12 +171,12 @@ public:
             if(modbus_write_register(m_mb, Move_Mode_Path_0_Register, Speed_Mode) == -1) return false;
             if(modbus_write_register(m_mb, Speed_Register, speed) == -1) return false;
             if(modbus_write_register(m_mb, Trigger_Register, Start_P0)) return false; 
+            sleep(4);
             // 等待低电平
             memset(m_state_registers, 0, sizeof(m_state_registers));
             modbus_read_registers(m_mb, DI_State_Register, 1, m_state_registers);
 
-            while (!(m_state_registers[0] & 0x02)){
-                memset(m_state_registers, 0, sizeof(m_state_registers));
+            if (!(m_state_registers[0] & 0x02)){
                 modbus_read_registers(m_mb, DI_State_Register, 1, m_state_registers);
             }
             // 启动高点平急停
@@ -247,6 +257,8 @@ void Callback_Function_deal(const std_msgs::String &msg){
             pub.publish(pub_state_msgs);
             return;
         } 
+        pub_state_msgs.data = "motor stop !!!";
+        pub.publish(pub_state_msgs);
         break;
     }
     case Funs::Change_direction :{
@@ -255,6 +267,8 @@ void Callback_Function_deal(const std_msgs::String &msg){
             pub.publish(pub_state_msgs);
             return;
         }
+        pub_state_msgs.data = "motor direction has changed !!!";
+        pub.publish(pub_state_msgs);
         break;
     }
     case Funs::Speed_mode :{
@@ -266,6 +280,8 @@ void Callback_Function_deal(const std_msgs::String &msg){
             pub.publish(pub_state_msgs);
             return;
         }
+        pub_state_msgs.data = "motor speed mode is running";
+        pub.publish(pub_state_msgs);
         break;
     }
     case Funs::Pos_mode :{
@@ -290,6 +306,8 @@ void Callback_Function_deal(const std_msgs::String &msg){
             pub.publish(pub_state_msgs);
             return;
         }
+        pub_state_msgs.data = "motor pos mode is running";
+        pub.publish(pub_state_msgs);
         break;
     }
     case Funs::Set_zero :{
@@ -298,6 +316,8 @@ void Callback_Function_deal(const std_msgs::String &msg){
             pub.publish(pub_state_msgs);
             return;
         }
+        pub_state_msgs.data = "motor Set zero pos successfully";
+        pub.publish(pub_state_msgs);
         break;
     }
     case Funs::Back_zero :{
@@ -306,6 +326,8 @@ void Callback_Function_deal(const std_msgs::String &msg){
             pub.publish(pub_state_msgs);
             return;
         }
+        pub_state_msgs.data = "motor back zero execute";
+        pub.publish(pub_state_msgs);
         break;
     }
     default:
@@ -317,25 +339,28 @@ void Callback_Function_deal(const std_msgs::String &msg){
 
 int main(int argc, char* argv[]){
     ros::init(argc, argv, "modbus_test");
-    ros::NodeHandle nh;
+    ros::NodeHandle nh("~");//因为launch中采样的是局部话柄,所以这里也要申明局部("~") 
     pub = nh.advertise<std_msgs::String>("/motor_states",100);
     sub = nh.subscribe("/ui_command",1, Callback_Function_deal);
     
     /*参数开放开放出去给launch文件*/
     std::string tmp_port, parity;
     int baud, data_bit, stop_bit;
-    nh.param<std::string>("port",tmp_port, "/dev/ttyS0");
-    nh.param<int>("baud",baud, 34800);
+    nh.param<std::string>("port",tmp_port, "/dev/ttyUSB0");
+    nh.param<int>("baud",baud, 38400);
     nh.param<std::string>("parity",parity, "N");
     nh.param<int>("data_bit", data_bit, 8);
-    nh.param<int>("stop_bit", stop_bit, 1);
+    nh.param<int>("stop_bit", stop_bit, 2);
     
     memset(info_data.m_port, 0, sizeof(info_data.m_port));
+    //printf("port:%s\n", info_data.m_port);
     strcpy(info_data.m_port, tmp_port.c_str());//端口根据情况而变
+    printf("port:%s\n", info_data.m_port);
     info_data.m_baud = baud;
     info_data.m_parity = parity[0];
     info_data.m_data_bit = data_bit;
     info_data.m_stop_bit = stop_bit;
+    
     // 初始化modbus
     if(!mb.init_modbus(info_data, Slave_Adress)){
         ROS_INFO("Modbus_Connect init_modbus() failed error: %s",modbus_strerror(errno));
@@ -345,6 +370,7 @@ int main(int argc, char* argv[]){
         ROS_INFO("Modbus_Connect Connect() failed error: %s",modbus_strerror(errno));
         return -1;
     }
+   
     if(!mb.init_motor()){
         ROS_INFO("Modbus_Connect init_motor() failed error: %s",modbus_strerror(errno));
         return -1;
