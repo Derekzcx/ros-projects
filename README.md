@@ -2,6 +2,6 @@
 
 - Robot_Control_ui_App 该工程为一种移动机器人操作界面
 
-- modbus_serial_test 该工程为基于libmodbus开放的modbus主机通讯节点
+- modbus_serial_test 该工程为基于libmodbus开放的modbus主机通讯节点,用于升降杆
 
 - hkcamera_driver 该工程为基于海康微视摄像头的SDK开放的ROS节点包括云台控制与数据接收功能, 也适用于可同时处和控制多摄像头,云台功能的话题控制在Robot_Control_ui_App中右定义
