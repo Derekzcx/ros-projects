@@ -1,6 +1,15 @@
 /**
  * @file /src/main_window.cpp
+ *
+ * @brief Implementation for the qt gui->
+ *
+ * @date February 2011
  **/
+
+/*
+* 该函数是 Qt 主界面文件，基本上控件触发都由该文件完成
+*/
+
 /*****************************************************************************
 ** Includes
 *****************************************************************************/
@@ -114,6 +123,9 @@ void MainWindow::initUis()
     ui->lineEdit_pos_mode_speed->setText("30");
     ui->lineEdit_pos_mode_pos->setText("0");
     ui->lineEdit_pos_mode_acc->setText("30");
+
+    // 保存图片
+    init_save_img();
 }
 
 void MainWindow::initData()
@@ -253,6 +265,8 @@ void MainWindow::initVideos()
    connect(&qnode,SIGNAL(Show_image(int,QImage)),this,SLOT(slot_show_image(int,QImage)));
 
 }
+
+
 void MainWindow::slot_show_image(int frame_id, QImage image) // 图像显示操作
 {
     switch (frame_id)
@@ -280,6 +294,113 @@ void MainWindow::slot_show_image(int frame_id, QImage image) // 图像显示操�
     }
 }
 
+/************************ 保存图片的操作 ********************************/
+// 保存图片板块
+void MainWindow::init_save_img(){
+  // 清除所有的图像勾选,可不做，默认是不勾选状态
+  // 设置默认保存名
+  ui->lineEdit_img_path->setAlignment(Qt::AlignRight); // 右对齐
+  ui->lineEdit_img_path->setText("./");
+  ui->lineEdit_img_name->setText("img");
+}
+void MainWindow::slot_open_save_img_path(){
+  // 用于获取位置信息
+  QString dirpath = QFileDialog::getExistingDirectory(this,"选择目录","./",QFileDialog::ShowDirsOnly);
+  ui->lineEdit_img_path->setText(dirpath);
+}
+// 保存操作(调试废弃)
+void MainWindow::option_save_img(int id){
+  qDebug()<<"xxx__"<<id;
+}
+// 保存图片主函数
+void MainWindow::slot_save_img(){
+  // 位置和文件名为非空判断
+  if(ui->lineEdit_img_name->text().isEmpty() || ui->lineEdit_img_path->text().isEmpty()){
+    QMessageBox::information(this, "warring", "保存位置 或 保存名为空 ！！！");
+    return;
+  }
+  //获取时间
+  QDateTime now = QDateTime::currentDateTime();
+  //获取位置
+  QString save_path = ui->lineEdit_img_path->text();
+  QString save_name = ui->lineEdit_img_name->text();
+  // 处理保存
+  QVector<bool> flag_save_success(7, true);
+
+  for(int i=0; i<=6; i++){
+    switch (i) {
+      case 0:{
+        if(!ui->checkBox_video_0->isChecked())break;
+        const QPixmap *pixmap = ui->label_video0->pixmap();
+        if(pixmap) {
+          if(!pixmap->save(save_path+"/"+save_name+"_0_"+now.toString("yyyyMMdd_hhmmss")+".jpg")) flag_save_success[0] = false;
+        }
+        break;
+      }
+      case 1:{
+        if(!ui->checkBox_video_1->isChecked())break;
+        const QPixmap *pixmap = ui->label_video1->pixmap();
+        if(pixmap) {
+          if(!pixmap->save(save_path+"/"+save_name+"_1_"+now.toString("yyyyMMdd_hhmmss")+".jpg")) flag_save_success[1] = false;
+        }
+        break;
+      }
+      case 2:{
+        if(!ui->checkBox_video_2->isChecked())break;
+        const QPixmap *pixmap = ui->label_video2->pixmap();
+        if(pixmap) {
+          if(!pixmap->save(save_path+"/"+save_name+"_2_"+now.toString("yyyyMMdd_hhmmss")+".jpg")) flag_save_success[2] = false;
+        }
+        break;
+      }
+      case 3:{
+        if(!ui->checkBox_video_3->isChecked())break;
+        const QPixmap *pixmap = ui->label_video3->pixmap();
+        if(pixmap) {
+          if(!pixmap->save(save_path+"/"+save_name+"_3_"+now.toString("yyyyMMdd_hhmmss")+".jpg")) flag_save_success[3] = false;
+        }
+        break;
+      }
+      case 5:{
+        if(!ui->checkBox_video_5->isChecked())break;
+        const QPixmap *pixmap = ui->label_video5->pixmap();
+        if(pixmap) {
+          if(!pixmap->save(save_path+"/"+save_name+"_5_"+now.toString("yyyyMMdd_hhmmss")+".jpg")) flag_save_success[5] = false;
+        }
+        break;
+      }
+      case 6:{
+        if(!ui->checkBox_video_6->isChecked())break;
+        const QPixmap *pixmap = ui->label_video6->pixmap();
+        if(pixmap) {
+          if(!pixmap->save(save_path+"/"+save_name+"_6_"+now.toString("yyyyMMdd_hhmmss")+".jpg")) flag_save_success[6] = false;
+        }
+        break;
+      }
+    default:break;
+    }
+  }
+
+  QString result_ = "已操作保存";
+  QString result_error = "失败保存信息：";
+  QString result_index = "";
+  int counts = 0;
+  for(int i=0; i<=6; i++){
+    if(i==4) continue;
+    if(!flag_save_success[i]) {
+        ++counts;
+        result_index = result_index + QString::number(i) + " ";
+    }
+  }
+  result_ = result_ + "\n保存路径："+save_path;
+  result_error = result_error +"失败个数为 "+ QString::number(counts) + " 个 \n具体信息：" + result_index;
+
+  QMessageBox::information(this, "保存提示",result_ + "\n" +result_error);
+
+
+}
+
+/********************************************************/
 
 void MainWindow::initRviz()
 {
@@ -378,6 +499,10 @@ void MainWindow::connections()
     connect(ui->pushButton_set_zero, SIGNAL(clicked()), this, SLOT(slot_set_zero()));
     connect(ui->pushButton_back_zero, SIGNAL(clicked()), this, SLOT(slot_back_zero()));
     connect(ui->pushButton_pos_mode_execute, SIGNAL(clicked()), this, SLOT(slot_pos_mode_execute()));
+
+    // 保存图片
+    connect(ui->toolButton_open_img_path, SIGNAL(clicked()), this, SLOT(slot_open_save_img_path()));
+    connect(ui->pushButton_save_img, SIGNAL(clicked()), this, SLOT(slot_save_img()));
 
 }
 //油门模式启动函数

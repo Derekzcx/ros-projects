@@ -1,3 +1,8 @@
+/*
+* 代码名称：setting.cpp
+* 作用：保存设置，该保存是即使程序关闭，也会记住此次的设置，并在下一次开机时自己定获取，
+* 调用的主要工具为：Qsetting类
+*/
 #include "../include/cyrobot_monitor/settings.h"
 #include "ui_settings.h"
 
@@ -6,13 +11,13 @@ Settings::Settings(QWidget *parent) :
     ui(new Ui::Settings)
 {
     ui->setupUi(this);
-    QSettings video_topic_setting("video_topic","cyrobot_monitor");
-    QStringList names=video_topic_setting.value("names").toStringList();
-    QStringList topics=video_topic_setting.value("topics").toStringList();
+    QSettings video_topic_setting("video_topic","cyrobot_monitor");               // 这里先定义了Qsetting类对象
+    QStringList names=video_topic_setting.value("names").toStringList();          // 获取对象的name对应的value, 并转换乘上StringList对象
+    QStringList topics=video_topic_setting.value("topics").toStringList();        // 同上
 
-    QStringList topics_2 = video_topic_setting.value("topics_2").toStringList(); // 识别
+    QStringList topics_2 = video_topic_setting.value("topics_2").toStringList();  // （这里是用于识别的原始图像的话题名存储）识别
 
-    if(names.size()==6)
+    if(names.size()==6)                                                           // 这里对应"菜单设置"中的设置项
     {
         ui->video0_name_set->setText(names[0]);
         ui->video0_name_set_2->setText(names[1]);
@@ -51,7 +56,7 @@ Settings::Settings(QWidget *parent) :
     connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(slot_ok_btn_click()));
     connect(ui->pushButton_2,SIGNAL(clicked()),this,SLOT(slot_cancel_btn_click()));
 }
-void Settings::slot_ok_btn_click()
+void Settings::slot_ok_btn_click()  // 这里是”菜单设置“界面的确定按钮 所绑定的槽函数
 {
     QSettings main_setting("topic_setting","cyrobot_monitor");
     main_setting.setValue("topic_odom",ui->lineEdit_odm->text());

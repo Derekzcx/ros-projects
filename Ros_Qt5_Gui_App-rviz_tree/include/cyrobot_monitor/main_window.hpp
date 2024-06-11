@@ -141,6 +141,13 @@ class MainWindow : public QMainWindow
         void slot_back_zero();
         void slot_pos_mode_execute();
         void slot_show_motor_msgs(QString);
+
+        // 保存图片相关
+        void init_save_img();              // 初始化图片保存部件
+        void slot_open_save_img_path();    // 选择保存位置的按钮
+        void slot_save_img();
+        void option_save_img(int);         //
+
     private slots:
     
     

@@ -1,3 +1,7 @@
+/*
+* 这里是界面的rviz 3D 节目的ros 接口文件
+* 这里调用了很多 关于 rviz API 库的函数和方法
+*/
 #include "../include/cyrobot_monitor/qrviz.hpp"
 
 QRviz::QRviz(QVBoxLayout *layout,QString node_name)
