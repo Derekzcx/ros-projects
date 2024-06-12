@@ -81,6 +81,7 @@ MainWindow::~MainWindow()
 {
     if(validator_time != nullptr) delete validator_time;
     if(validator_speed != nullptr) delete validator_speed;
+    if(save_img_ptr != nullptr) delete save_img_ptr;
     if( base_cmd)
     {
         delete base_cmd;
@@ -266,29 +267,95 @@ void MainWindow::initVideos()
 
 }
 
-
+/************************************ 图像显示 (配置了自动保存功能)********************************/
 void MainWindow::slot_show_image(int frame_id, QImage image) // 图像显示操作
 {
     switch (frame_id)
     {
-    case 0:  // 基础界面
-        ui->label_video0->setPixmap(QPixmap::fromImage(image).scaled(ui->label_video0->width(),ui->label_video0->height()));
-        break;
-    case 1:  // 基础界面
-        ui->label_video1->setPixmap(QPixmap::fromImage(image).scaled(ui->label_video1->width(),ui->label_video1->height()));
-        break;
-    case 2:   // 其他界面
-        ui->label_video2->setPixmap(QPixmap::fromImage(image).scaled(ui->label_video2->width(),ui->label_video2->height()));
-        break;
-    case 3:   // 其他界面
-        ui->label_video3->setPixmap(QPixmap::fromImage(image).scaled(ui->label_video3->width(),ui->label_video3->height()));
-        break;
+    case 0:{  // 基础界面
+        QPixmap qimg = QPixmap::fromImage(image);
+        ui->label_video0->setPixmap(qimg.scaled(ui->label_video0->width(),ui->label_video0->height()));
+        label_v0.setPixmap(qimg);
+        if(ui->checkBox_auto_save_img->isChecked() && ui->checkBox_video_0->isChecked()){
+          QDateTime current_time = QDateTime::currentDateTime();
+          qint64 inverval_time = save_img_ptr->last_time.secsTo(current_time); // 间隔时间计算
+          save_img_ptr->interval = ui->lineEdit_auto_save_time->text().toInt();
+          if(inverval_time >= save_img_ptr->interval){
+              qimg.save(ui->lineEdit_img_path->text()+"/"+ui->lineEdit_img_name->text()+"_0_"+"auto_"+current_time.toString("yyyyMMdd_hhmmss")+".jpg");
+              save_img_ptr->last_time = current_time;
+          }
+        }
+        break;}
+    case 1:{  // 基础界面
+      QPixmap qimg = QPixmap::fromImage(image);
+      ui->label_video1->setPixmap(qimg.scaled(ui->label_video1->width(),ui->label_video1->height()));
+      label_v1.setPixmap(qimg);
+      if(ui->checkBox_auto_save_img->isChecked() && ui->checkBox_video_1->isChecked()){
+        QDateTime current_time = QDateTime::currentDateTime();
+        qint64 inverval_time = save_img_ptr->last_time.secsTo(current_time); // 间隔时间计算
+        save_img_ptr->interval = ui->lineEdit_auto_save_time->text().toInt();
+        if(inverval_time >= save_img_ptr->interval){
+            qimg.save(ui->lineEdit_img_path->text()+"/"+ui->lineEdit_img_name->text()+"_1_"+"auto_"+current_time.toString("yyyyMMdd_hhmmss")+".jpg");
+            save_img_ptr->last_time = current_time;
+        }
+      }
+        break;}
+    case 2:{   // 其他界面
+      QPixmap qimg = QPixmap::fromImage(image);
+      ui->label_video2->setPixmap(qimg.scaled(ui->label_video2->width(),ui->label_video2->height()));
+      label_v2.setPixmap(qimg);
+      if(ui->checkBox_auto_save_img->isChecked() && ui->checkBox_video_2->isChecked()){
+        QDateTime current_time = QDateTime::currentDateTime();
+        qint64 inverval_time = save_img_ptr->last_time.secsTo(current_time); // 间隔时间计算
+        save_img_ptr->interval = ui->lineEdit_auto_save_time->text().toInt();
+        if(inverval_time >= save_img_ptr->interval){
+            qimg.save(ui->lineEdit_img_path->text()+"/"+ui->lineEdit_img_name->text()+"_2_"+"auto_"+current_time.toString("yyyyMMdd_hhmmss")+".jpg");
+            save_img_ptr->last_time = current_time;
+        }
+      }
+        break;}
+    case 3: {  // 其他界面
+        QPixmap qimg = QPixmap::fromImage(image);
+        ui->label_video3->setPixmap(qimg.scaled(ui->label_video3->width(),ui->label_video3->height()));
+        label_v3.setPixmap(qimg);
+        if(ui->checkBox_auto_save_img->isChecked() && ui->checkBox_video_3->isChecked()){
+          QDateTime current_time = QDateTime::currentDateTime();
+          qint64 inverval_time = save_img_ptr->last_time.secsTo(current_time); // 间隔时间计算
+          save_img_ptr->interval = ui->lineEdit_auto_save_time->text().toInt();
+          if(inverval_time >= save_img_ptr->interval){
+              qimg.save(ui->lineEdit_img_path->text()+"/"+ui->lineEdit_img_name->text()+"_3_"+"auto_"+current_time.toString("yyyyMMdd_hhmmss")+".jpg");
+              save_img_ptr->last_time = current_time;
+          }
+        }
+        break;}
     case 5:{  // 基础界面
-        ui->label_video5->setPixmap(QPixmap::fromImage(image).scaled(ui->label_video5->width(), ui->label_video5->height()));
+        QPixmap qimg = QPixmap::fromImage(image);
+        ui->label_video5->setPixmap(qimg.scaled(ui->label_video5->width(),ui->label_video5->height()));
+        label_v5.setPixmap(qimg);
+        if(ui->checkBox_auto_save_img->isChecked() && ui->checkBox_video_5->isChecked()){
+            QDateTime current_time = QDateTime::currentDateTime();
+            qint64 inverval_time = save_img_ptr->last_time.secsTo(current_time); // 间隔时间计算
+            save_img_ptr->interval = ui->lineEdit_auto_save_time->text().toInt();
+            if(inverval_time >= save_img_ptr->interval){
+                qimg.save(ui->lineEdit_img_path->text()+"/"+ui->lineEdit_img_name->text()+"_5_"+"auto_"+current_time.toString("yyyyMMdd_hhmmss")+".jpg");
+                save_img_ptr->last_time = current_time;
+            }
+        }
         break;
        }
     case 6:{  // 基础界面
-        ui->label_video6->setPixmap(QPixmap::fromImage(image).scaled(ui->label_video6->width(), ui->label_video6->height()));
+        QPixmap qimg = QPixmap::fromImage(image);
+        ui->label_video6->setPixmap(qimg.scaled(ui->label_video6->width(),ui->label_video6->height()));
+        label_v6.setPixmap(qimg);
+        if(ui->checkBox_auto_save_img->isChecked() && ui->checkBox_video_6->isChecked()){
+            QDateTime current_time = QDateTime::currentDateTime();
+            qint64 inverval_time = save_img_ptr->last_time.secsTo(current_time); // 间隔时间计算
+            save_img_ptr->interval = ui->lineEdit_auto_save_time->text().toInt();
+            if(inverval_time >= save_img_ptr->interval){
+                qimg.save(ui->lineEdit_img_path->text()+"/"+ui->lineEdit_img_name->text()+"_6_"+"auto_"+current_time.toString("yyyyMMdd_hhmmss")+".jpg");
+                save_img_ptr->last_time = current_time;
+            }
+        }
         break;
        }
     }
@@ -298,10 +365,18 @@ void MainWindow::slot_show_image(int frame_id, QImage image) // 图像显示操�
 // 保存图片板块
 void MainWindow::init_save_img(){
   // 清除所有的图像勾选,可不做，默认是不勾选状态
+  ui->lineEdit_img_path->setPlaceholderText("img save path...");
+  ui->lineEdit_img_name->setPlaceholderText("img name...");
+  ui->lineEdit_auto_save_time->setPlaceholderText("interval time/s");
   // 设置默认保存名
   ui->lineEdit_img_path->setAlignment(Qt::AlignRight); // 右对齐
   ui->lineEdit_img_path->setText("./");
   ui->lineEdit_img_name->setText("img");
+  ui->lineEdit_auto_save_time->setText("5");
+  //保存图片的时间结构体初始化
+  save_img_ptr = new auto_save_st();
+  save_img_ptr->interval = 5;
+  save_img_ptr->last_time = QDateTime::currentDateTime();
 }
 void MainWindow::slot_open_save_img_path(){
   // 用于获取位置信息
@@ -331,7 +406,7 @@ void MainWindow::slot_save_img(){
     switch (i) {
       case 0:{
         if(!ui->checkBox_video_0->isChecked())break;
-        const QPixmap *pixmap = ui->label_video0->pixmap();
+        const QPixmap *pixmap = label_v0.pixmap();
         if(pixmap) {
           if(!pixmap->save(save_path+"/"+save_name+"_0_"+now.toString("yyyyMMdd_hhmmss")+".jpg")) flag_save_success[0] = false;
         }
@@ -339,7 +414,7 @@ void MainWindow::slot_save_img(){
       }
       case 1:{
         if(!ui->checkBox_video_1->isChecked())break;
-        const QPixmap *pixmap = ui->label_video1->pixmap();
+        const QPixmap *pixmap = label_v1.pixmap();
         if(pixmap) {
           if(!pixmap->save(save_path+"/"+save_name+"_1_"+now.toString("yyyyMMdd_hhmmss")+".jpg")) flag_save_success[1] = false;
         }
@@ -347,7 +422,7 @@ void MainWindow::slot_save_img(){
       }
       case 2:{
         if(!ui->checkBox_video_2->isChecked())break;
-        const QPixmap *pixmap = ui->label_video2->pixmap();
+        const QPixmap *pixmap = label_v2.pixmap();
         if(pixmap) {
           if(!pixmap->save(save_path+"/"+save_name+"_2_"+now.toString("yyyyMMdd_hhmmss")+".jpg")) flag_save_success[2] = false;
         }
@@ -355,7 +430,7 @@ void MainWindow::slot_save_img(){
       }
       case 3:{
         if(!ui->checkBox_video_3->isChecked())break;
-        const QPixmap *pixmap = ui->label_video3->pixmap();
+        const QPixmap *pixmap = label_v3.pixmap();
         if(pixmap) {
           if(!pixmap->save(save_path+"/"+save_name+"_3_"+now.toString("yyyyMMdd_hhmmss")+".jpg")) flag_save_success[3] = false;
         }
@@ -363,7 +438,7 @@ void MainWindow::slot_save_img(){
       }
       case 5:{
         if(!ui->checkBox_video_5->isChecked())break;
-        const QPixmap *pixmap = ui->label_video5->pixmap();
+        const QPixmap *pixmap = label_v5.pixmap();
         if(pixmap) {
           if(!pixmap->save(save_path+"/"+save_name+"_5_"+now.toString("yyyyMMdd_hhmmss")+".jpg")) flag_save_success[5] = false;
         }
@@ -371,7 +446,7 @@ void MainWindow::slot_save_img(){
       }
       case 6:{
         if(!ui->checkBox_video_6->isChecked())break;
-        const QPixmap *pixmap = ui->label_video6->pixmap();
+        const QPixmap *pixmap = label_v6.pixmap();
         if(pixmap) {
           if(!pixmap->save(save_path+"/"+save_name+"_6_"+now.toString("yyyyMMdd_hhmmss")+".jpg")) flag_save_success[6] = false;
         }

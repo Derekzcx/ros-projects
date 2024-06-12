@@ -1603,11 +1603,32 @@ QProgressBar {
                   </layout>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_save_img">
-                   <property name="text">
-                    <string>保存图片</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_23">
+                   <item>
+                    <widget class="QLineEdit" name="lineEdit_auto_save_time">
+                     <property name="maximumSize">
+                      <size>
+                       <width>80</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="checkBox_auto_save_img">
+                     <property name="text">
+                      <string>自动保存与否</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButton_save_img">
+                     <property name="text">
+                      <string>手动保存图片</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                 </layout>
                </widget>

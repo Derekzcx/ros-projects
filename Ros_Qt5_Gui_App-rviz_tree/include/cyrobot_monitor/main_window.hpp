@@ -31,7 +31,10 @@
 #include <QVBoxLayout>
 #include <QInputDialog>
 #include <QFileDialog>
+#include <QHash>
+#include <QLabel>
 #include <map>
+#include <QDateTime>
 //rviz
 #include <rviz/visualization_manager.h>
 #include <rviz/render_panel.h>
@@ -59,6 +62,12 @@ namespace cyrobot_monitor {
 /**
  * @brief Qt central, all operations relating to the view part here.
  */
+// 时间间隔结构体
+struct auto_save_st{
+  qint64 interval;
+  QDateTime last_time;
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -208,6 +217,15 @@ private:
         QValidator* validator_speed;
         QValidator* validator_time;
 
+        // 自动保存图片的结构体
+        auto_save_st *save_img_ptr;
+        // 原始图片
+        QLabel label_v0;
+        QLabel label_v1;
+        QLabel label_v2;
+        QLabel label_v3;
+        QLabel label_v5;
+        QLabel label_v6;
 };
 }// namespace cyrobot_monitor
 
